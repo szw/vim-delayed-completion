@@ -13,22 +13,33 @@ if exists('g:loaded_vim_delayed_completion') || &cp || v:version < 700
 endif
 let g:loaded_vim_delayed_completion = 1
 
-if !exists('g:dc_completion_triggers')
-  let g:dc_completion_triggers =  {
-    \   'c' : ['->', '.'],
-    \   'objc' : ['->', '.'],
-    \   'ocaml' : ['.', '#'],
-    \   'cpp,objcpp' : ['->', '.', '::'],
-    \   'perl' : ['->'],
-    \   'php' : ['->', '::'],
-    \   'cs,java,javascript,d,vim,ruby,python,perl6,scala,vb,elixir,go' : ['.'],
-    \   'lua' : ['.', ':'],
-    \   'erlang' : [':'],
-    \ }
+if !exists('g:delayed_completion_triggers')
+  let g:delayed_completion_triggers =  {
+        \   'c' : ['->', '.'],
+        \   'objc' : ['->', '.'],
+        \   'ocaml' : ['.', '#'],
+        \   'cpp,objcpp' : ['->', '.', '::'],
+        \   'perl' : ['->'],
+        \   'php' : ['->', '::'],
+        \   'cs,java,javascript,d,vim,ruby,python,perl6,scala,vb,elixir,go' : ['.'],
+        \   'lua' : ['.', ':'],
+        \   'erlang' : [':'],
+        \ }
 endif
 
-if !exists('g:dc_completion_sequence')
-  let g:dc_completion_sequence = "\<C-x>\<C-o>\<C-p>"
+if !exists('g:delayed_completion_sequence')
+  let g:delayed_completion_sequence = "\<C-x>\<C-o>\<C-p>"
+endif
+
+if !exists('g:delayed_completion_delay')
+  let g:delayed_completion_delay = 1000
+endif
+
+let s:default_updatetime = &updatetime
+
+if g:delayed_completion_delay
+  au InsertEnter * exe 'setl ut=' . g:delayed_completion_delay
+  au InsertLeave * exe 'setl ut=' . s:default_updatetime
 endif
 
 au CursorHoldI * call <SID>try_complete()
@@ -41,7 +52,7 @@ function! <SID>try_complete()
     return 0
   endif
 
-  for [filetypes, triggers] in items(g:dc_completion_triggers)
+  for [filetypes, triggers] in items(g:delayed_completion_triggers)
     if index(split(filetypes, ","), &ft) >= 0
       for trigger in triggers
         let index = -1
@@ -54,7 +65,7 @@ function! <SID>try_complete()
           endif
 
           if abs(index) == trigger_length
-            call feedkeys(g:dc_completion_sequence)
+            call feedkeys(g:delayed_completion_sequence)
             return 1
           endif
           let index -= 1
