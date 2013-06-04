@@ -15,13 +15,14 @@ let g:loaded_vim_delayed_completion = 1
 
 if !exists('g:delayed_completion_triggers')
   let g:delayed_completion_triggers =  {
+        \   'ruby,eruby' : ['.', '::'],
         \   'c' : ['->', '.'],
         \   'objc' : ['->', '.'],
         \   'ocaml' : ['.', '#'],
         \   'cpp,objcpp' : ['->', '.', '::'],
         \   'perl' : ['->'],
         \   'php' : ['->', '::'],
-        \   'cs,java,javascript,d,vim,ruby,python,perl6,scala,vb,elixir,go' : ['.'],
+        \   'cs,java,javascript,d,vim,python,perl6,scala,vb,elixir,go' : ['.'],
         \   'lua' : ['.', ':'],
         \   'erlang' : [':'],
         \ }
@@ -31,14 +32,14 @@ if !exists('g:delayed_completion_sequence')
   let g:delayed_completion_sequence = "\<C-x>\<C-o>\<C-p>"
 endif
 
-if !exists('g:delayed_completion_delay')
-  let g:delayed_completion_delay = 1000
+if !exists('g:delayed_completion_custom_delay')
+  let g:delayed_completion_custom_delay = 0
 endif
 
 let s:default_updatetime = &updatetime
 
-if g:delayed_completion_delay
-  au InsertEnter * exe 'setl ut=' . g:delayed_completion_delay
+if g:delayed_completion_custom_delay
+  au InsertEnter * exe 'setl ut=' . g:delayed_completion_custom_delay
   au InsertLeave * exe 'setl ut=' . s:default_updatetime
 endif
 
